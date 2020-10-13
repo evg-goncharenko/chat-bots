@@ -24,10 +24,10 @@ var (
 	AutoIncrement int = 1
 
 	Users          map[string]int64 = make(map[string]int64)
-	TaskManagement map[int]Task     = make(map[int]Task) // TaskManagement
+	TaskManagement map[int]Task     = make(map[int]Task)
 )
-
-func OutputCurrentTasks(pers string) string { // вывод всех текущих задач пользователя: /tasks
+// output of all current user tasks: /tasks
+func OutputCurrentTasks(pers string) string {
 	var result string
 
 	size := len(TaskManagement)
@@ -55,7 +55,8 @@ func OutputCurrentTasks(pers string) string { // вывод всех текущ�
 	return result
 }
 
-func CreatingNewTask(taskName string, author string) string { // создание новой задачи: /new XXX YYY ZZZ
+// creating a new task: /new XXX YYY ZZZ
+func CreatingNewTask(taskName string, author string) string { 
 	size := len(TaskManagement)
 	if size != 0 {
 		for i, j := range TaskManagement {
@@ -72,7 +73,8 @@ func CreatingNewTask(taskName string, author string) string { // создани�
 	return "Задача \"" + taskName + "\" создана, id=" + strconv.Itoa(AutoIncrement-1)
 }
 
-func SwitchingTaskPerformer(id int, person string) (string, string) { // переключение исполнителя задачи на пользователя: /assign_$ID
+// switching the task performer to the user: /assign_$ID
+func SwitchingTaskPerformer(id int, person string) (string, string) { 
 	var res1, res2 string
 	tsk, err := TaskManagement[id]
 	if err == false {
@@ -92,7 +94,8 @@ func SwitchingTaskPerformer(id int, person string) (string, string) { // пер�
 	return res1, res2
 }
 
-func RemovingTaskPerformer(id int, person string) (string, string) { // снятие задачи с текущего исполнителя: /unassign_$ID
+// removing a task from the current performer: /unassign_$ID
+func RemovingTaskPerformer(id int, person string) (string, string) { 
 	var res1, res2 string
 	tsk, err := TaskManagement[id]
 	if err == false {
@@ -115,7 +118,8 @@ func RemovingTaskPerformer(id int, person string) (string, string) { // снят
 	return res1, res2
 }
 
-func ExecutionAndDeletion(id int, person string) string { // выполнение задачи и удаление её из списка: /resolve_$ID
+// completing a task and removing it from the list: /resolve_$ID
+func ExecutionAndDeletion(id int, person string) string { 
 	tsk, err := TaskManagement[id]
 	if err == false {
 		return "Несуществующая задача"
@@ -132,7 +136,8 @@ func ExecutionAndDeletion(id int, person string) string { // выполнени�
 
 }
 
-func ShowMyTasks(person string) string { // отображение задач, которые назначены этому пользователю: /my
+// display tasks assigned to this user: /my
+func ShowMyTasks(person string) string { 
 	var result string
 	size := len(TaskManagement)
 	if size == 0 {
@@ -150,7 +155,8 @@ func ShowMyTasks(person string) string { // отображение задач, �
 	return result
 }
 
-func ShowOwnerTasks(person string) string { // отображение задач, которые были созданы этим пользователем: /owner
+// display tasks that were created by this user: /owner
+func ShowOwnerTasks(person string) string { 
 	var result string
 	size := len(TaskManagement)
 	if size == 0 {
@@ -168,16 +174,17 @@ func ShowOwnerTasks(person string) string { // отображение задач
 	return result
 }
 
-func startTaskBot(ctx context.Context) error { // запуск чат-бота
-	bot, err := tgbotapi.NewBotAPI(BotToken) // инициализация BotAPI
+// launching a chatbot
+func startTaskBot(ctx context.Context) error { 
+	bot, err := tgbotapi.NewBotAPI(BotToken) // initializing BotAPI
 	if err != nil {
 		log.Fatalf("NewBotAPI failed: %s", err)
 	}
 
-	bot.Debug = true // отладка
+	bot.Debug = true // debug
 	fmt.Printf("Authorized on account %s\n", bot.Self.UserName)
 
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook(WebhookURL)) // обращение всех уведомлений на WebhookURL
+	_, err = bot.SetWebhook(tgbotapi.NewWebhook(WebhookURL)) // accessing all notifications on WebhookURL
 	if err != nil {
 		log.Fatalf("SetWebhook failed: %s", err)
 	}
@@ -197,7 +204,7 @@ func startTaskBot(ctx context.Context) error { // запуск чат-бота
 	}()
 	fmt.Println("start listen :8081")
 
-	// получаем все обновления из канала updates
+	// getting all updates from the updates channel
 	for update := range updates {
 		UserName := update.Message.From.UserName
 		ChatID := update.Message.Chat.ID
