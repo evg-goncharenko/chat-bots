@@ -7,10 +7,8 @@ import (
 	"reflect"
 	"strconv"
 	"sync/atomic"
-	// "encoding/json"
 	"fmt"
 	"gopkg.in/telegram-bot-api.v4"
-	// "io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -19,8 +17,10 @@ import (
 )
 
 func init() {
-	// upd global var for testing
-	// we use patched version of gopkg.in/telegram-bot-api.v4 ( WebhookURL const -> var)
+/*
+	Upd global var for testing
+	we use patched version of gopkg.in/telegram-bot-api.v4 ( WebhookURL const -> var)
+*/
 	WebhookURL = "http://127.0.0.1:8081"
 	BotToken = "_golangcourse_test"
 }
@@ -58,8 +58,6 @@ func (srv *TDS) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		srv.Lock()
 		srv.Answers[chatID] = text
 		srv.Unlock()
-
-		//fmt.Println("TDS sendMessage", chatID, text)
 	})
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -182,7 +180,7 @@ func TestTasks(t *testing.T) {
 
 	cases := []testCase{
 		{
-			// команда /tasks - выводит список всех активных задач
+			// /tasks - displays a list of all active tasks
 			Ivanov,
 			"/tasks",
 			map[int]string{
@@ -190,7 +188,7 @@ func TestTasks(t *testing.T) {
 			},
 		},
 		{
-			// команда /new - создаёт новую задачу, всё что после /new - идёт в название задачи
+			// command /new - creates a new task, everything after /new - goes to the task name
 			Ivanov,
 			"/new написать бота",
 			map[int]string{
@@ -206,7 +204,7 @@ func TestTasks(t *testing.T) {
 			},
 		},
 		{
-			// /assign_* - назначает задачу на себя
+			// /assign_* - assigns the task to itself
 			Alexandrov,
 			"/assign_1",
 			map[int]string{
@@ -215,8 +213,10 @@ func TestTasks(t *testing.T) {
 			},
 		},
 		{
-			// в случае если задача была назначена на кого-то - он получает уведомление об этом
-			// в данном случае она была назначена на Alexandrov, поэтому ему отправляется уведомление
+		/*
+			if the task was assigned to someone, they get a notification about it
+			in this case, it was assigned to Alexandrov, so a notification is sent to Him
+		*/
 			Petrov,
 			"/assign_1",
 			map[int]string{
@@ -225,7 +225,7 @@ func TestTasks(t *testing.T) {
 			},
 		},
 		{
-			// если задача назначена и на мне - показывается "на меня"
+			// if the task is also assigned to me, "to me" is displayed"
 			Petrov,
 			"/tasks",
 			map[int]string{
@@ -235,8 +235,7 @@ assignee: я
 			},
 		},
 		{
-			// если задача назначена и не на мне - показывается логин исполнителя
-			// при
+			// if the task is assigned and not on me, the performer's username is shown
 			Ivanov,
 			"/tasks",
 			map[int]string{
@@ -246,8 +245,11 @@ assignee: @ppetrov`,
 		},
 
 		{
-			// /unassign_ - снимает задачу с себя
-			// нельзя снять задачу которая не на вас
+			
+		/*
+			/unassign_ - removes the task from itself
+			you can't remove an issue that isn't on you
+		*/
 			Alexandrov,
 			"/unassign_1",
 			map[int]string{
@@ -256,8 +258,10 @@ assignee: @ppetrov`,
 		},
 
 		{
-			// /unassign_ - снимает задачу с себя
-			// автору отправляется уведомление что задача осталась без исполнителя
+		/*
+			/unassign_ - removes the task from itself
+			a notification is sent to the author that the task was left without a performer
+		*/
 			Petrov,
 			"/unassign_1",
 			map[int]string{
@@ -267,8 +271,10 @@ assignee: @ppetrov`,
 		},
 
 		{
-			// повтор
-			// в случае если задача была назначена на кого-то - автор получает уведомление об этом
+		/*
+			repeat
+			if the task was assigned to someone, the author receives a notification about it
+		*/
 			Petrov,
 			"/assign_1",
 			map[int]string{
@@ -277,8 +283,10 @@ assignee: @ppetrov`,
 			},
 		},
 		{
-			// /resolve_* завершает задачу, удаляет её из хранилища
-			// автору отправляется уведомление об этом
+		/*
+			/resolve_* completes the task and deletes it from the storage
+			the author is notified about this
+		*/
 			Petrov,
 			"/resolve_1",
 			map[int]string{
@@ -296,7 +304,7 @@ assignee: @ppetrov`,
 		},
 
 		{
-			// обратите внимание, id=2 - автоинкремент
+			// note that id=2 is an auto-increment
 			Petrov,
 			"/new сделать ДЗ по курсу",
 			map[int]string{
@@ -304,7 +312,7 @@ assignee: @ppetrov`,
 			},
 		},
 		{
-			// обратите внимание, id=3 - автоинкремент
+			// note that id=3 is an auto-increment
 			Ivanov,
 			"/new прийти на хакатон",
 			map[int]string{
@@ -323,9 +331,12 @@ assignee: @ppetrov`,
 			},
 		},
 		{
-			// повтор
-			// в случае если задача была назначена на кого-то - автор получает уведомление об этом
-			// если он автор задачи - ему не приходит дополнительного уведомления о том что она назначена на кого-то
+		/*
+			repeat
+			if the task was assigned to someone, the author receives a notification about it
+			if he is the author of the task, he does not receive an additional notification that it is assigned to someone
+			
+		*/
 			Petrov,
 			"/assign_2",
 			map[int]string{
@@ -345,8 +356,10 @@ assignee: я
 			},
 		},
 		{
-			// /my показывает задачи которые назначены на меня
-			// при этому тут нет метки assegnee
+		/*
+			/my shows the tasks that are assigned to me
+			at this time there is no label assegnee
+		*/
 			Petrov,
 			"/my",
 			map[int]string{
@@ -355,8 +368,10 @@ assignee: я
 			},
 		},
 		{
-			// /owner - показывает задачи, которы я создал
-			// при этому тут нет метки assegnee
+		/*
+			/owner - shows the tasks that I created
+			at this time there is no label assegnee
+		*/
 			Ivanov,
 			"/owner",
 			map[int]string{
