@@ -1,19 +1,19 @@
-## Реализация телеграм-бота по управлению задачами
+## Implementation of a telegram bot for task management
 
 <img src="taskbot.png" width="100%">
 
-### Управление происходит через текстовый интерфейс:
+### Control is performed via a text interface:
 * `/tasks`
-* `/new XXX YYY ZZZ` - создаёт новую задачу
-* `/assign_$ID` - делает пользователя исполнителем задачи
-* `/unassign_$ID` - снимает задачу с текущего исполнителя
-* `/resolve_$ID` - выполняет задачу, удаляет её из списка
-* `/my` - показывает задачи, которые назначены на меня
-* `/owner` - показывает задачи которые были созданы мной
+* `/new XXX YYY ZZZ` - creates a new task
+* `/assign_$ID` - assigns the user to the task
+* `/unassign_$ID` - unassigns the current assignee from the task
+* `/resolve_$ID` - performs the task, removes it from the list
+* `/my` - shows the tasks that are assigned to me
+* `/owner` - shows the tasks that were created by me
 
-Использование подправленной библиотеки для работы с телеграм-ботом, чтобы можно было написать тесты притворившись сервером телеграма. Она лежит в папке vendors . 
-Тесты запускаются через `go test -v -mod=vendor`.
+Using a fixed library to work with a telegram bot allows us to write tests as if we were a telegram server. It is located in the `vendors` folder.
+Run tests with `go test -v -mod=vendor`.
 
-Запуск чат-бота возможен в 2-х вариантах:
-1. `ngrok` (https://ngrok.com/) - пробрасывает порт к вам (после авторизации там будет команда для сохранения токена в конфиге). Скорее всего не будет работать из-за Роскомнадзора.
-2. `heroku` (https://devcenter.heroku.com/articles/getting-started-with-go) - предоставляют бесплатный хостинг для Golang с поддоменом и сертификатом, который можно подключить к телеграму. 
+The chatbot can be launched in 2 variants:
+1. `ngrok` (https://ngrok.com/) - sends the port to you (after authorization, there will be a command to save the token in the config). Most likely, it will not work because of [Federal Service for Supervision of Communications, Information Technology and Mass Media](https://en.wikipedia.org/wiki/Federal_Service_for_Supervision_of_Communications,_Information_Technology_and_Mass_Media).
+2. `heroku` (https://devcenter.heroku.com/articles/getting-started-with-go) - provides free hosting for Golang with a subdomain and a certificate that can be connected to Telegram.

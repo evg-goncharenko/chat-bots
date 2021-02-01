@@ -1,3 +1,3 @@
-# Чат-боты
--  KudaGo телеграм-бот - итоговый проект Осенней Школы Бизнес Проектов ВШЭ 2016
--  TaskBot - работа в Техносфере Mail.ru Group
+# Chat-bots
+- KudaGo Telegram bot - final project in the HSE Autumn School of Business Projects 2016
+- TaskBot - task in the Technosphere Mail.ru Group
